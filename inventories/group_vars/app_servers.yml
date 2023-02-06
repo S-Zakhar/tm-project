@@ -1,0 +1,76 @@
+# Application servers settings and variables
+
+# Nginx
+nginx:
+  type: webserver
+  vhost: "mydomain"
+  vhost_path: "/var/www/wordpress"
+  auth:
+    user: "admin"
+    password: "$JGFwcjEkdWZJdi9UMVIkYXgzSDVXU0wSfESy"
+  ssl: false
+
+
+# PHP. задаём версию PHP которую будем ставить
+php_version: "7.4"
+
+# ProxySQL
+# ProxySQL. General settings
+proxysql_admin_password: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          39653965653365666434643165613838623330396266353263653363323639653163656631663465
+          3032313537663937613432613763613330646238336162390a326235643163616538303136363661
+          30663234653462363439353334343031653038323239633466616333346136626564366639396163
+          6135663831383965370a373533653365393931383532666532623765393539333631343265303732
+          3462
+proxysql_version: 2.4
+
+# Specify the parameters of the database nodes that we want to add to the ProxySQL
+proxysql_mysql_servers:
+   - address: instance-02
+     port: 3306
+     hostgroup: 1
+   - address: instance-03
+     port: 3306
+     hostgroup: 1
+   - address: instance-04
+     port: 3306
+     hostgroup: 1
+
+# Specify the parameters of the mysql user, which we add to the ProxySQL
+proxysql_mysql_users:
+  - username: wordpress
+    password: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          31373461376637316434643436353661356663356364636666643037393337666264663534393039
+          3861643666616662626431353365623839633431643239360a623762656466373739393063303638
+          66346665623530363561653261386365663430333437653437366637333839623532396537396536
+          3333623133353033360a336132323163636637376238396333616437333465613366313236376532
+          3862
+    default_hostgroup: 1
+
+# query rules MySQL to ProxySQL
+proxysql_mysql_query_rules:
+  - match_pattern: "^SELECT .* FOR UPDATE$"
+    destination_hostgroup: 0
+  - match_pattern: "^SELECT"
+    destination_hostgroup: 1
+
+
+# Wordpress
+# variables fo Wordpress
+wordpress:
+#  tmp_dir: /tmp
+  download_url: https://wordpress.org/wordpress-latest.tar.gz
+  www_dir: /var/www
+
+mysql_db: "wordpress"
+mysql_user: "wordpress"
+mysql_password: "!vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          31373461376637316434643436353661356663356364636666643037393337666264663534393039
+          3861643666616662626431353365623839633431643239360a623762656466373739393063303638
+          66346665623530363561653261386365663430333437653437366637333839623532396537396536
+          3333623133353033360a336132323163636637376238396333616437333465613366313236376532
+          3862"
+db_hostname: "127.0.0.1:6033"

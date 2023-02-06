@@ -1,0 +1,41 @@
+# ansible user
+ansible_user: ubuntu
+
+# Путь к используемому интерпретатору Python
+ansible_python_interpreter: /usr/bin/python3
+
+# SSH port для ansible
+ansible_port: 22
+
+
+# Учётные данные администраторов системы
+users:
+  - {name: "admin1", shell: "/bin/bash",  password: , key_file: "files/publickeys/admin1.pub" }
+  - {name: "admin2", shell: "/bin/bash",  password: , key_file: "files/publickeys/admin2.pub" }
+  - {name: "admin3", shell: "/bin/bash", password: , key_file: "files/publickeys/admin3.pub"}
+  - {name: "admin4", shell: "/bin/bash", password: , key_file: "files/publickeys/admin4.pub"}
+
+# Группы, в которых состоят администраторы
+access_map:
+  test:
+    - {name: "admin1", groups: "adm, sudo"}
+    - {name: "admin2", groups: "adm, sudo"}
+    - {name: "admin3", groups: "adm, sudo"}
+    - {name: "admin4", groups: "adm, sudo"}
+  data_bases:
+    - {name: "admin1", groups: "adm, sudo"}
+    - {name: "admin2", groups: "adm, sudo"}
+    - {name: "admin3", groups: "adm, sudo"}
+    - {name: "admin4", groups: "adm, sudo"}
+  app_servers:
+    - {name: "admin1", groups: "adm, sudo, www-data"}
+    - {name: "admin2", groups: "adm, sudo, www-data"}
+    - {name: "admin3", groups: "adm, sudo, www-data"}
+    - {name: "admin4", groups: "adm, sudo, www-data"}
+  monitoring:
+    - {name: "admin1", groups: "adm, sudo"}
+    - {name: "admin2", groups: "adm, sudo"}
+    - {name: "admin3", groups: "adm, sudo"}
+    - {name: "admin4", groups: "adm, sudo"}
+
+

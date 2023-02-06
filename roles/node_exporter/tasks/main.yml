@@ -1,0 +1,60 @@
+
+- name: Создаём группу пользователей node exporter
+  group: name="node_exporter"
+  become: true
+  tags: node_exporter
+
+- name: Создаём пользователя prometheus node exporter
+  user:
+    name: "node_exporter"
+    group: "node_exporter"
+    system: true
+    shell: "/sbin/nologin"
+    comment: "node_exporter nologin User"
+    createhome: "no"
+    state: present
+  tags: node_exporter
+
+- name: Скачиваем установочные файлы node exporter во временную папку
+  unarchive:
+    src: "https://github.com/prometheus/node_exporter/releases/download/v{{ version }}/node_exporter-{{ version }}.linux-amd64.tar.gz"
+    dest: /tmp/
+    remote_src: true
+  tags: node_exporter
+
+- name: Копирование node exporter файлов в папку bin
+  copy:
+    src: "/tmp/node_exporter-{{ version }}.linux-amd64/node_exporter"
+    dest: "/usr/local/bin/node_exporter"
+    owner: "node_exporter"
+    group: "node_exporter"
+    remote_src: true
+    mode: 0755
+  tags: node_exporter
+
+- name: Удаляю установочные файлы node exporter из временной папки
+  file:
+    path: '/tmp/node_exporter-{{ version }}.linux-amd64'
+    state: absent
+  tags: node_exporter
+
+- name: Копирование init файла в папку systemd
+  template:
+    src: init.service.j2
+    dest: /etc/systemd/system/node_exporter.service
+  tags: node_exporter
+
+
+- name: Запуск службы node_exporter
+  service:
+    name: node_exporter
+    state: started
+    enabled: true
+  tags: node_exporter
+
+- name: Проверяем, доступен ли node exporter
+  uri:
+    url: http://127.0.0.1:9100/metrics
+    method: GET
+    status_code: 200
+  tags: node_exporter

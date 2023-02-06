@@ -1,0 +1,5 @@
+upload:
+  stage: deploy
+  image: alpine:latest
+  script:
+    - 'curl -X POST -H "Content-Type: application/json" -d "{\"chat_id\": \"${GROUP_ID}\", \"text\": \"Branch ${CI_COMMIT_BRANCH} was updated by ${CI_DEPLOY_USER}\"}" https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage '

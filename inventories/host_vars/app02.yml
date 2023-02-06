@@ -1,0 +1,32 @@
+# firewall settings
+iptables:
+  accept_ports:
+    - {protocol: tcp, port: 80}
+    - {protocol: tcp, port: 443}
+
+
+# vars for synchronization (unison)
+unison_configs:
+  - name: sync-wordpress
+    src: /var/www/wordpress
+    dest: ssh://app01.mydomain//var/www/wordpress
+    ignore:
+      - "Path .git/*"
+      - "Name *.{log,tmp}"
+
+unison_cron:
+  hour: '*'
+  minute: '*/5'
+
+
+# settings for certbot
+certbot_create_standalone_stop_services:
+  - nginx
+
+certbot_create_if_missing: true
+certbot_certs:
+  - email: admin@mydomain
+    domains:
+      - mydomain
+
+

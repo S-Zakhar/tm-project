@@ -1,0 +1,41 @@
+
+- name: Генерация HTTP auth конфига
+  template:
+    backup: true
+    src: htpasswd.j2
+    dest: /etc/nginx/.htpasswd
+    owner: root
+    group: root
+  when: nginx.auth.user is defined
+  notify: nginx-config:check
+
+- name: Создание {{ nginx.vhost }} log файла если его ещё нету
+  file:
+    path: "/var/log/nginx/{{ nginx.vhost }}-{{ item }}.log"
+    state: touch
+    owner: www-data
+    group: www-data
+    mode: 0644
+  with_items:
+    - access
+    - errors
+
+- name: Создание конфига для web сервера {{ nginx.vhost }}
+  template:
+    backup: true
+    src: vhost.conf.j2
+    dest: /etc/nginx/conf.d/{{ nginx.vhost }}.conf
+    owner: root
+    group: root
+  notify: nginx-config:check
+  when: nginx.type == "webserver"
+
+- name: Создание конфига для proxy сервера {{ nginx.vhost }}
+  template:
+    backup: true
+    src: vhost-proxy.conf.j2
+    dest: /etc/nginx/conf.d/{{ nginx.vhost }}.conf
+    owner: root
+    group: root
+  notify: nginx-config:check
+  when: nginx.type == "proxy"

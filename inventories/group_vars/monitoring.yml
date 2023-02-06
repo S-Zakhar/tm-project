@@ -1,0 +1,22 @@
+# Monitoring servers settings and variables
+# Prometheus
+prometheus:
+  node_exporter:
+    - {host: mon01.mydomain}
+    - {host: app01.mydomain}
+    - {host: app02.mydomain}
+    - {host: db01.mydomain}
+    - {host: db02.mydomain}
+    - {host: db03.mydomain}
+  alertmanager:
+    - {host: mon01.mydomain}
+
+
+# Nginx
+nginx:
+  type: proxy
+  vhost: "grafana.mydomain"
+  proxy_host: localhost
+  proxy_port: 3000
+  ssl: true
+

@@ -1,0 +1,9 @@
+---
+- include: install.yml
+  tags:
+    - influxdb
+
+- include: configure.yml
+  tags:
+    - influxdb
+    - influxdb_config

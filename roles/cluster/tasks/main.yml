@@ -1,0 +1,2 @@
+- import_tasks: ./install-configure-mariadb.yml
+- import_tasks: ./cluster-configure.yml

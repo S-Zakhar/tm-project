@@ -1,0 +1,18 @@
+#!/bin/bash
+# Скрипт создания бэкапа директории
+
+# Путь до директории, куда сохраняем бэкап
+backup_dir={{path.backup_dir}}
+# Путь до директории, бэкап которой создаем
+backup_www={{path.backup_www}}
+
+Host=$(hostname)
+Today=$(date '+%Y%m%d%h%M')
+date=`date`
+
+file="$backup_dir/$Host-www-$Today.tar.gz"
+echo "$date Backing up directory '$backup_www from '$Host' to: $file"
+
+# Создание бэкапа, и в случае успешного выполнения - удаление бэкапов старше 3-х суток
+tar -czvf $file --absolute-names $backup_www && \
+    /usr/bin/find $backup_dir -mtime +3 -delete

@@ -1,0 +1,10 @@
+---
+- hosts: data_bases
+  become: true
+  become_method: sudo
+  roles:
+    - {role: common}
+    - {role: iptables}
+    - {role: cluster}
+    - {role: telegraf}
+    - {role: node_exporter}

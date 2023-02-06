@@ -1,0 +1,42 @@
+---
+- name: Проверяем, существуют ли уже выпущенные сертификаты
+  stat:
+    path: /etc/letsencrypt/live/{{ cert_item.domains | first | replace('*.', '') }}/cert.pem
+  register: letsencrypt_cert
+
+- name: Создаём папки pre и post hook
+  file:
+    path: /etc/letsencrypt/renewal-hooks/{{ item }}
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+  with_items:
+    - pre
+    - post
+
+- name: Создание pre hook для остановки службы.
+  template:
+    src: stop_services.j2
+    dest: /etc/letsencrypt/renewal-hooks/pre/stop_services
+    owner: root
+    group: root
+    mode: 0750
+  when:
+    - certbot_create_standalone_stop_services is defined
+    - certbot_create_standalone_stop_services
+
+- name: Создание post hook для запуска службы.
+  template:
+    src: start_services.j2
+    dest: /etc/letsencrypt/renewal-hooks/post/start_services
+    owner: root
+    group: root
+    mode: 0750
+  when:
+    - certbot_create_standalone_stop_services is defined
+    - certbot_create_standalone_stop_services
+
+- name: Генерирую новый сертификат если его ещё нет
+  command: "{{ certbot_create_command }}"
+  when: not letsencrypt_cert.stat.exists

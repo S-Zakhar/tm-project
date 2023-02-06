@@ -1,0 +1,21 @@
+---
+- name: Установка PHP
+  apt:
+    update_cache: true
+    cache_valid_time: 3600
+    state: latest
+    name: "{{item}}"
+  loop:
+    - "php{{php_version}}-fpm"
+    - "php{{php_version}}-common"
+    - "php{{php_version}}-mysql"
+    - "php{{php_version}}-gmp"
+    - "php{{php_version}}-curl"
+    - "php{{php_version}}-intl"
+    - "php{{php_version}}-mbstring"
+    - "php{{php_version}}-gd"
+    - "php{{php_version}}-xml"
+    - "php{{php_version}}-cli"    
+    - "php{{php_version}}-zip"
+  notify: php-fpm:restart
+  tags: php

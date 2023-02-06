@@ -1,0 +1,6 @@
+- name: Установка Nginx
+  apt:
+    update_cache: true
+    cache_valid_time: 3600
+    name: nginx
+    state: latest

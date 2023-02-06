@@ -1,0 +1,7 @@
+---
+- name: Перезапуск php-fpm сервис
+  service:
+    name: "php{{php_version}}-fpm"
+    state: restarted
+    enabled: true
+  listen: php-fpm:restart

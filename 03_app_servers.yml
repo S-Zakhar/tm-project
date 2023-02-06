@@ -1,0 +1,12 @@
+- hosts: web_servers
+  become: true
+  become_method: sudo
+  roles:
+    - {role: common}
+    - {role: iptables}
+    - {role: proxysql}
+    - {role: php}
+    - {role: nginx}
+    - {role: unison}
+    - {role: telegraf}
+    - {role: node_exporter}

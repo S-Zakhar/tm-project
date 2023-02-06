@@ -1,0 +1,46 @@
+# firewall settings
+iptables:
+  accept_ports:
+    - {protocol: tcp, port: 80}
+    - {protocol: tcp, port: 443}
+
+
+# vars for  backup role
+backup:
+  path_scripts: /opt/backup/scripts
+  source_folder: /var/www/wordpress
+  source_base_name: wordpress
+  source_base_user: wordpress
+  source_base_password: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          31373461376637316434643436353661356663356364636666643037393337666264663534393039
+          3861643666616662626431353365623839633431643239360a623762656466373739393063303638
+          66346665623530363561653261386365663430333437653437366637333839623532396537396536
+          3333623133353033360a336132323163636637376238396333616437333465613366313236376532
+          3862
+  destination_folder: /opt/backup/archive
+
+
+# vars for synchronization (unison)
+unison_configs:
+  - name: sync-wordpress
+    src: /var/www/wordpress
+    dest: ssh://app02.mydomain//var/www/wordpress
+    ignore:
+      - "Path .git/*"
+      - "Name *.{log,tmp}"
+
+unison_cron:
+  hour: '*'
+  minute: '*/3'
+
+
+# settings for certbot
+certbot_create_standalone_stop_services:
+  - nginx
+
+certbot_create_if_missing: true
+certbot_certs:
+  - email: admin@mydomain
+    domains:
+      - mydomain

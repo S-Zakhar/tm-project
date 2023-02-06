@@ -1,0 +1,26 @@
+- name: Create a folder for Unison
+  file:
+    path: "/home/backup-data/.unison"
+    owner: backup-data
+    group: www-data
+    state: directory
+    mode: 0755
+
+- name: Create config from template
+  template:
+    src: sync.prf.j2
+    dest: /home/backup-data/.unison/{{ item.name }}.prf
+    owner: backup-data
+    group: www-data
+    mode: 0644
+  with_items: "{{ unison_configs }}"
+
+
+- name: Add sync-job to cron
+  cron:
+    name: "Sync folder of sait"
+    minute: '{{ unison_cron.minute }}'
+    hour: '{{ unison_cron.hour }}'
+    job: "unison sync-wordpress.prf"
+    user: backup-data
+

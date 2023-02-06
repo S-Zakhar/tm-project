@@ -1,0 +1,14 @@
+---
+- include: install.yml
+  tags:
+    - certbot
+
+- include: configure.yml
+  tags:
+    - certbot
+    - certbot_config
+
+- import_tasks: renew-cron.yml
+  tags:
+    - certbot
+    - certbot_cron

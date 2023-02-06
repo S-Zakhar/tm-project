@@ -1,0 +1,10 @@
+
+- name: Перезагрузка демона Prometheus
+  service:
+    name: prometheus
+    state: restarted
+  listen: event_restart_prometheus
+
+- name: Перезагрузка демона systemd
+  command: systemctl daemon-reload
+  listen: systemd_reload
