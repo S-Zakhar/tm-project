@@ -1,0 +1,61 @@
+- name: Установка mariadb
+  apt:
+    update_cache: true
+    cache_valid_time: 3600
+    name: "{{ item }}"
+    state: latest
+  loop:
+    - mariadb-server
+    - mariadb-client
+    - python3-pymysql
+  tags: cluster, mysql_install
+
+- name: Сервис MySQL запускаем и добавляем в автозагрузку
+  service:
+      name: mysql
+      state: started
+      enabled: True
+  tags: cluster, mysql_install
+
+- name: Проверка установлен ли root пароль MySQL
+  shell: mysql -u root -p'{{ cluster.mariadb.root_password }}' -h '127.0.0.1' -e "quit"
+  changed_when: false
+  ignore_errors: true
+  register: root_pwd_check
+  tags: cluster, mysql_install, mysql_config
+
+
+- block:
+  - name: Смена плагина авторизации MySQL для root пользователя
+    shell: mysql -u root -e 'UPDATE mysql.user SET plugin="mysql_native_password" WHERE user="root" AND host="localhost"'
+
+  - name: Сброс привелегий MySQL
+    shell: mysql -u root -e 'FLUSH PRIVILEGES'
+  
+  - name: Установка пароля для root в MySQL если пароль root не задан
+    mysql_user:
+      login_host: 'localhost'
+      login_user: 'root'
+      login_password: ''
+      name: 'root'
+      password: '{{ cluster.mariadb.root_password }}'
+      state: present
+
+  - name: Удаление анонимного пользователя с mariadb server
+    mysql_user:
+      login_user: root
+      login_password: "{{ cluster.mariadb.root_password }}"
+      check_implicit_admin: true
+      user: ""
+      host: "localhost"
+      state: absent
+
+  - name: Удаление тестовой базы с mariadb
+    mysql_db:
+      login_user: root
+      login_password: "{{ cluster.mariadb.root_password }}"
+      db: test
+      state: absent
+
+  when: root_pwd_check.rc != 0
+  tags: cluster, mysql_install, mysql_config

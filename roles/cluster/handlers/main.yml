@@ -1,0 +1,19 @@
+---
+# handlers file for roles/cluster
+- name: Перезагрузка MySQL первого узла кластера
+  service:
+    name: mariadb
+    state: restarted
+    enabled: true
+  listen: mysql-first:restart
+
+- name: Создание нового кластера
+  shell: galera_new_cluster
+  listen: mysql-first:restart
+
+- name: Перезагрузка MySQL
+  service:
+    name: mariadb
+    state: restarted
+    enabled: true
+  listen: mysql:restart

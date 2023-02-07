@@ -1,0 +1,19 @@
+#!/bin/bash
+# Скрипт создания бэкапа базы MySQL.
+
+# Путь сохранения файлов бэкапа
+backup_dir={{path.backup_dir}}
+# Название базы MySQL, бэкап которой делаем
+backup_db={{path.backup_db}}
+
+Host=$(hostname)
+Dump="/usr/bin/mysqldump --skip-extended-insert --force --no-tablespaces"
+Today=$(date '+%Y-%m-%d')
+date=`date`
+
+file="$backup_dir/$Host-$backup_db-$Today.sql.gz"
+echo "$date Backing up MySQL database '$backup_db' from '$Host' to: $file"
+
+# Создание бэкапа, и в случае успешного выполнения - удаление бэкапов старше 3-х суток
+$Dump -h localhost $backup_db | gzip > $file && \
+    /usr/bin/find $backup_dir -mtime +3 -delete

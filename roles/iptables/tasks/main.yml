@@ -1,0 +1,5 @@
+---
+# tasks file for roles/iptables
+
+- import_tasks: ./package-install-iptables-persistent.yml
+- import_tasks: ./iptables-build.yml

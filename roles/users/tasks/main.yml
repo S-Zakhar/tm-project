@@ -1,0 +1,52 @@
+---
+# tasks file for roles/users
+
+
+- name: add system user
+  user:
+    name: "{{item.0.name}}"
+    shell: "{{item.1.shell}}"
+    groups: "{{item.0.groups}}"
+    password: "{{item.1.password}}"
+  with_nested:
+    - "{{access_map[target]}}"
+    - "{{users}}"
+  when: item.0.name == item.1.name
+  tags: users
+
+
+- name: set permissions
+  file:
+    path:  "{{item.1.home | default('/home/'+item.0.name) }}"
+    owner: "{{item.0.name}}"
+    group: "{{item.0.name}}"
+    recurse: true
+  with_nested:
+    - "{{access_map[target]}}"
+    - "{{users}}"
+  when: item.0.name == item.1.name
+  tags: users
+
+
+- name: add public key
+  authorized_key:
+    user: "{{item.0.name}}"
+    state: present
+    key: "{{lookup('file', item.1.key_file)}}"
+    comment: Ansible key
+  with_nested:
+    - "{{access_map[target]}}"
+    - "{{users}}"
+  when: item.1.key_file is defined and (item.0.name == item.1.name) 
+  tags: users
+
+
+- name: remove user
+  user:
+    name: "{{item.name}}"
+    remove: true
+    state: absent
+  with_items:
+    - "{{deny_map[target]}}"
+  ignore_errors: true
+  tags: users, users_deny

@@ -1,0 +1,23 @@
+
+- name: Создаём базу {{ influxdb.db_name }}
+  command: "{{ influxdb.influx_bin }} -execute 'CREATE DATABASE \"{{ influxdb.db_name }}\"'"
+  changed_when: false
+
+- name: Создание главного пользователя influxdb
+  influxdb_user:
+    login_host: localhost
+    login_user: "{{ influxdb.admin_user }}"
+    login_password: "{{ influxdb.admin_password }}"
+    user: "{{ influxdb.admin_user }}"
+    password: "{{ influxdb.admin_password }}"
+    privilege: ALL
+
+- name: Создание пользователя telegraf influxdb
+  influxdb_user:
+    login_host: localhost
+    login_user: "{{ influxdb.admin_user }}"
+    login_password: "{{ influxdb.admin_password }}"
+    user: "{{ influxdb.user_name }}"
+    password: "{{ influxdb.password }}"
+    database: "{{ influxdb.db_name }}"
+    privilege: ALL

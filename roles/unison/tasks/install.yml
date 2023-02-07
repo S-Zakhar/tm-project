@@ -1,0 +1,36 @@
+---
+- name: install unison
+  apt:
+    update_cache: true
+    cache_valid_time: 3600
+    name: unison
+    state: latest
+
+- name: create group www-data
+  group:
+    name: www-data
+    state: present
+
+- name: create user backup-data
+  user:
+    name: backup-data
+    group: www-data
+    password_lock: "yes"
+
+- name: copying SSH keys to user backup-data folder
+  copy:
+    src: '{{ file.name }}'
+    mode: '{{ file.mode }}'
+    owner: backup-data
+    group: www-data
+    dest: '/home/backup-data/.ssh/'
+    force: true
+  loop:
+    - mode: '600'
+      name: 'files/unison_keys/id_rsa'
+    - mode: '644'
+      name: 'files/unison_keys/id_rsa.pub'
+    - mode: '600'
+      name: 'files/unison_keys/authorized_keys'
+  loop_control:
+    loop_var: file

@@ -1,0 +1,7 @@
+- name: Установка iptables-persistent
+  apt:
+    update_cache: true
+    cache_valid_time: 3600
+    name: iptables-persistent
+    state: latest
+  tags: iptables

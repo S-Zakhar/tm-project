@@ -1,0 +1,23 @@
+---
+
+certbot_script: "certbot"
+
+
+certbot_create_command: >-
+  {{ certbot_script }} certonly --standalone --noninteractive --agree-tos
+  --email {{ cert_item.email | default(certbot_admin_email) }}
+  -d {{ cert_item.domains | join(',') }}
+  {{ '--pre-hook /etc/letsencrypt/renewal-hooks/pre/stop_services'
+    if certbot_create_standalone_stop_services
+  else '' }}
+  {{ '--post-hook /etc/letsencrypt/renewal-hooks/post/start_services'
+    if certbot_create_standalone_stop_services
+  else '' }}
+
+
+# Certbot auto-renew cron job configuration (for certificate renewals).
+certbot_auto_renew: true
+certbot_auto_renew_user: "root"
+certbot_auto_renew_hour: "3"
+certbot_auto_renew_minute: "30"
+certbot_auto_renew_options: "--quiet --no-self-upgrade"

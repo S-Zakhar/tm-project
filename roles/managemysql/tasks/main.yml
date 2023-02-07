@@ -1,0 +1,37 @@
+---
+# tasks file for managemysql
+
+- name: Устанавливаем необходимые программы
+  apt:
+    update_cache: true
+    cache_valid_time: 3600
+    state: latest
+    name: python3-pymysql
+
+- name: Создаю базу данных для сайта
+  mysql_db:
+    name: '{{ managemysql.db_name_sait }}'
+    state: present
+    encoding: utf8
+    login_user: root
+    login_password: '{{ cluster.mariadb.root_password }}'
+
+- name: Создаю пользователя MySQL для сайта
+  mysql_user:
+    name: '{{ managemysql.user_name_sait }}'
+    host: '%'
+    password: '{{ managemysql.password_sait }}'
+    priv: '{{ managemysql.db_name_sait }}.*:ALL,GRANT'
+    login_user: root
+    login_password: '{{ cluster.mariadb.root_password }}'
+    state: present
+
+- name: Создание пользователя MySQL для мониторинга кластера Galera
+  mysql_user:
+    name: monitor
+    host: '%'
+    password: '{{ managemysql.password_monitoring }}'
+    priv: '*.*:ALL,GRANT'
+    login_user: root
+    login_password: '{{ cluster.mariadb.root_password }}'
+    state: present

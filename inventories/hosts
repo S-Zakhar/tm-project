@@ -1,0 +1,22 @@
+# Inventory
+
+# DB servers
+[data_bases]
+db01    ansible_host=146.185.243.222 ansible_user=ubuntu ansible_ssh_private_key_file=/home/sergey/.ssh/id_rsa
+db02    ansible_host=87.239.104.99 ansible_user=ubuntu ansible_ssh_private_key_file=/home/sergey/.ssh/id_rsa
+db03    ansible_host=146.185.242.179 ansible_user=ubuntu ansible_ssh_private_key_file=/home/sergey/.ssh/id_rsa
+
+# Application severs
+[app_servers]
+app01    ansible_host=146.185.240.22 ansible_user=ubuntu ansible_ssh_private_key_file=/home/sergey/.ssh/id_rsa
+app02    ansible_host=146.185.243.169 ansible_user=ubuntu ansible_ssh_private_key_file=/home/sergey/.ssh/id_rsa
+
+# Monitoring
+[monitoring]
+mon01    ansible_host=192.168.11.66 ansible_user=ubuntu ansible_ssh_private_key_file=/home/sergey/.ssh/id_rsa
+
+# All groups
+[all_servers:children]
+data_bases
+app_servers
+monitoring

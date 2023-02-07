@@ -1,0 +1,54 @@
+# ваша почта для логина в облако
+variable "username" {   
+  type    = string
+  default = ""
+}
+
+# пароль для логина
+variable "password" {
+  type    = string
+  default = ""
+}
+
+# См. в https://mcs.mail.ru/app/project/keys
+variable "project_id" {
+  type    = string
+  default = ""
+}
+
+# См. в https://mcs.mail.ru/app/project/keys
+variable "region" {
+  type    = string
+  default = ""
+}
+
+# См. в https://mcs.mail.ru/app/project/keys
+variable "auth_url" {
+  type    = string
+  default = ""
+}
+
+# Не менять
+variable "image_id" {
+  type    = string
+  default = "Ubuntu-20.04.1-202008"
+}
+
+# Не менять
+variable "flavor_id" {
+  type    = string
+  default = "Basic-1-2-20"
+}
+
+# Количество машин
+variable "instances_count" {
+  type    = string
+  default = "5"
+}
+
+# Наши ключи
+variable "our-keys" {
+  type    = string
+  default = "#cloud-config\nusers:\n  - name: ubuntu\n    groups: sudo\n    shell: /bin/bash\n    sudo: ['ALL=(ALL) NOPASSWD:ALL']\n    ssh-authorized-keys:\n      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDxvoNN8QXvXl3ENHFaeL5dSsHdozh+68spJQjDSPL85GBqtUFfQOisn8I8rEMvHAiyw+2Vc13U568s8kftqaybZbhR86dIVG5oWMflqW15WeX17Rb9Zth401JgNY/9qvQQQArESHl7GLvvbN5Is1rVpbiWhiVKrX9eFTq8OC4Phj9hlmqLIxRou3Kz30pKIk1KflyTWUU+/3BQpCY59DBMa2Sxw2kq1D9d+bovNtrOo6Wt+d0pu+RfkjCKClk+3HWNFwdnmOYvlG6VTeL7qY9JJHU0TdKLpUvlHXteAuc8vZGiiR65IUH0pMCkW7VyWQuD6RQuESC5YtD9JipQJDIfegKmumyic/bkvslbLRX0KQF0lYBf6fGuDhCDAfg+/CpJM0amUCI3V/SlpsEMWC5b1WQvOBHxw23JKOnUSnvsU7C0FwK/RCkBzUpGNPbUCTBHjmqD6WwEagLSDj1mkDHadJYolPINSzR+jlgHKzZ53BiRybaW/poneVjWdk/JGYM=\n      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC7Q9pXWINM0gJtCZB+0jAtcLWR65B31oohDKmY1H9XF2Jm+RRjWRnSH+PeZYF+cYKIa4sntPgIwCfR61BLL6UhLVRhjILtrEWS04UGRpJkncgMapFhO0fw2tNfNRGGnzd69u7dpkDoi2mUBT1upSVnw9Rk0O6of16rGXuQlvLsDuoAJjeb+hSIUp49pq/zYKYa+rmAd2otWrP8l7H/tfmoJ6wcRL/M+IIJ+2TB8VH9wE89hGfd3pcEubTRVaqxf0igAew0oGxNSr2tbjq4WEc/vurLieiyhnub3SP/UyfhiK1GZxn+EOu+ZxaDiOJyn90W//Gd27ktvBrUTfzAkG6X\n      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCtqIc5FCbE9dvKH9rBurBIbBNIiudwMZ7FqOeSTT85UO+T4Rr/nZxF0HgTfQYFZg1bGIGfhZuI9Csj5nwxK7Y1/5xO6tTp4c+nlzX+VdX0wUYybb8RurHlIvQKfv7gEJgHfdp0Lvz0wlgxcmsjF9X27pCfCNVpVCbImLuztQAFlTGVzEjvmrLLTR+xW7cSh1tdy3tv2XOGxQQSgLVfhFoUsLhOULIeIC8n9aFqsc4pzLLlHWrZU5Rf9k0cTnzKmGRj4LUJBNfaZEtSGXlpFVeiff1u1OEXNL5tM2uVKNAzUD+rX4+yk8VLX3CFmy2T1ce0rcOwvUGe8SK5amGB/mrwSbeoWiUkRTs82tP8419qcm+0MPlZAHnnZHitheEX8L8Nkxa7kVKqSpFA8qNEkPp6bK4afdF5mooSK/ZDaG+8bwKAy4Z8azEgzHsSzLJePM9mE1OVCUDHzcFXP8Zje0JnjqXPJV1eWoV2HbBtDYICU4GClpm/hQ0Ys9LnuROlE/8=\n      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC68aHFmHffkvodXwPN/oaG+DK9CjyN5ogL/ao68TgO6vJ/TM8zzN2eqa83gVVevf9ytmibNKRg0HveH+8NuH/O4BMU9bsDWs8CGJ9wCdWYsnq5O52Yp8Xs4nBLFtLWx8dEmm7x73GJ8126Dua1EJXO/4KYgstta/oPsa47SSN/Ow2wUJx/MynPIvwtKPd2jQlEusDS0ef/pzK/0Nqv57K+2XM0s1qdjbD+KUU+soMN7ANgBxz3Do0ZnzeeW1YxbQ8T7RKWgCjpX/PZQjJ019gWHcgFWLcpXKEZaGtl51DsF+KcG9AJvFkg2MTE95MmJHcXGoZsYd6AHRAwEg765KolP17ZGFBEYNvg87Q3d2UWK3AQRVr2wLevm51Wny2yTSvmSKFAJXjdo6wPLIaS+VN0bf6zDz2G1ceZNX5gydUThYWuTandggBcGCi5nNdwOv/KpVs6CXlaAN6diVqEAAphBjO6WOKmk7YDgL3I39RJ4y6WTlv8ylROiX+iBq9vsKU=\n      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCryuZab6KN5Hx2S2duCB+7RUAHpMFb4Kqg+ZRPgTfXxgxPvi83SOJZFLaZrcR17lV+aluezaeQw00G8SF060MEdpLXiGDvCsUZzeJ++bhpYShtYgzidVD++gMgaw5uLtkMwwvaplG2ciHN6mF2CvcwjKEw0tF3BPO/zkPufHEoJzV5IZUWxLaOq+GEm13w9psDriQ8BbXnqG1K7PgK2S1fl0TwKxuYxnr4jQn1GRXBDJQ2SuhDkRd9qkEEnYFiQuoCJuMnteMA+dOdhxwUzeEmsgRgJ1jJjBdYmFhmiUMscqMlgxyObVpkaySbMeOah7HpVn6du8ead+ziqzr1uX2sAT5jFnX7IZXMHmmfc54pIaJDLN54rAwaSYRWSHuKy2sgBXz3mbbL2o/84EpHkc5Eu/ZsH2wptRekhG7bRMAUFqoKSySZshhp6C/Dp3rXLTEyXbvIAD8JOyYrctOK5ZTzrkeqRjboA0sxTDP6milcolt11tKxzlnRJBPjTRyEIw0=\n      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDLPBn+Hp9ZSHr68uAi/zl5K9pDv2dT9o1pf+rvVVVaViv5/US31HrY43rriifhjJMj2MFr5raNLJpNRAx0dfaEETEtb5qonpeQBzGUEUMItKO2svqv548uK12K44mq00yV5ulkMKk0Asd5Hjv6Z40N6IhYe1KNok+JaUG0cA60HU2wSkEJG4nJrs7Zp4YKL1LlS2xaqIiC2GTLonSH6tfjYv4kcCbXE4AfvKgji9CJk33VD2NFylLOj4X0oki32qrB5s8iWEQJeenhMjrl7vsgW4FEmWdEh2sJymsWCuqQY0Rg1dnFZIaqrI3BjvYbQRBi9M1yhfbqhhXE27bG2aBh+zp/hjjc59hX5OniOMZWLBlcK3++oL/MRhMnPK+NetxrnLZzBHFbgM3Xk+FS4ou66t6cRBl+AOEDnDgVzwMjJPrphj5nDTAn3vmTJUj7PxB0n5/MCXCRTykK+PR5c7tGbtC+ttGvQbxqk6/nK0FDeoGhIV66aVC7x8haqr+9NXkZYRKIt8zUK5MxN+BCtTO9O6yoPFUBoLw1rW4ElhIf0jM+Bhz9cU6NnK6yfbsCKbnJcggoCGz4TrFtRVJfj2wsPNRJMIuvKJEO780HiVH7q3iiIiDDxv7+DuvQEaWHULTOcA25uWWYpzc2Fxq4cS1lHYQRKqnYpL6u1YfxMpbYlQ=="
+}
+

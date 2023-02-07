@@ -1,0 +1,13 @@
+---
+- hosts: monitoring
+  become: true
+  become_method: sudo
+  roles:
+    - {role: common}
+    - {role: iptables}
+    - {role: node_exporter}
+    - {role: prometheus}
+    - {role: influxdb}
+    - {role: telegraf}
+    - {role: grafana}
+    - {role: nginx}

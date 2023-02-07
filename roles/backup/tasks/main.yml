@@ -1,0 +1,62 @@
+---
+# tasks file for roles/backup
+
+- name: Создаем пользователя backup-data
+  user:
+    name: backup-data
+    group: www-data
+    password_lock: "yes"
+
+- name: Создаем директории для скриптов и backup-ов
+  file:
+    path: '{{item}}'
+    state: directory
+    owner: backup-data
+    group: www-data
+    mode: '0755'
+    recurse: true
+  loop:
+    - '{{ backup.path_scripts }}'
+    - '{{ backup.destination_folder }}'
+    - '{{ backup.destination_folder }}/mysql'
+    - '{{ backup.destination_folder }}/www'
+    - '/var/log/backup'
+
+
+- name: Создаем файлы скриптов на удаленном хосте
+  template:
+    src: '{{path.src}}'
+    dest: '{{ backup.path_scripts }}/{{path.dest}}'
+    owner: backup-data
+    group: www-data
+    mode: '0700'
+  loop:
+    - src: 'backup_mysql.sh.j2'
+      dest: 'backup_mysql.sh'
+      backup_dir: '{{ backup.destination_folder }}/mysql'
+      backup_db: '{{ backup.source_base_name }}'
+    - src: 'backup_www.sh.j2'
+      dest: 'backup_www.sh'
+      backup_dir: '{{ backup.destination_folder }}/www'
+      backup_www: '{{ backup.source_folder }}'
+  loop_control:
+    loop_var: path
+
+- name: Добавляем пользователю backup-data файл авторизации для MySQL
+  template:
+    src: '.my.cnf.j2'
+    dest: '/home/backup-data/.my.cnf'
+    owner: backup-data
+    group: www-data
+    mode: '0600'
+
+- name: Добавляем задания в cron пользователя backup-data
+  cron:
+    minute: "0"
+    hour: "0"
+    job: '{{item}}'
+    user: backup-data
+  loop:
+    - '{{ backup.path_scripts }}/backup_www.sh >> /var/log/backup/backup_www.log'
+    - '{{ backup.path_scripts }}/backup_mysql.sh >> /var/log/backup/backup_mysql.log'
+  

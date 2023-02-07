@@ -1,0 +1,8 @@
+- name: Создание конфига для Telegraf
+  template:
+    backup: true
+    src: telegraf.conf.j2
+    dest: /etc/telegraf/telegraf.conf
+    owner: root
+    group: root
+  notify: telegraf-config:restart

@@ -1,0 +1,21 @@
+- name: "Создание конфига MySQL для первого узла кластера"
+  template:
+    backup: true
+    src: "50-server-master.j2"
+    dest: /etc/mysql/mariadb.conf.d/50-server.cnf
+    owner: root
+    group: root
+  when: cluster.name == 'node1'
+  notify: mysql-first:restart
+  tags: cluster, cluster_config
+
+- name: "Создание конфига MySQL для узла кластера"
+  template:
+    backup: true
+    src: "50-server-slave.j2"
+    dest: /etc/mysql/mariadb.conf.d/50-server.cnf
+    owner: root
+    group: root
+  when: cluster.name != 'node1'
+  notify: mysql:restart
+  tags: cluster, cluster_config

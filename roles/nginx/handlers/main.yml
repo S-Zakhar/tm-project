@@ -1,0 +1,12 @@
+---
+- name: Проверка корректности настроек Nginx
+  shell: nginx -t
+  listen: nginx-config:check
+  notify: nginx-config:restart
+
+- name: Применение настроек Nginx
+  service:
+    name: nginx
+    state: restarted
+    enabled: true
+  listen: nginx-config:restart

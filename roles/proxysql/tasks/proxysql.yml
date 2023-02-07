@@ -1,0 +1,61 @@
+---
+- name: Adds repository key
+  apt_key:
+    url: http://repo.proxysql.com/ProxySQL/repo_pub_key
+    state: present
+
+- name: Adds percona repositories
+  apt_repository:
+    repo: 'deb http://repo.proxysql.com/ProxySQL/proxysql-{{ proxysql_version }}.x/{{ ansible_distribution_release }} ./'
+    state: present
+
+
+- name: Installs proxysql & python-mysqldb
+  apt:
+    update_cache: true
+    cache_valid_time: 3600
+    name: "{{ item }}"
+    state: latest
+  loop:
+    - proxysql
+    - mysql-client
+    - python3-pymysql
+    - mysql-common
+
+
+- name: Holds proxysql version
+  dpkg_selections:
+    name: proxysql
+    selection: hold
+
+- name: Configures proxysql
+  template:
+    src: proxysql.cnf.j2
+    dest: /etc/proxysql.cnf
+    mode: 0644
+    backup: true
+  notify:
+    - Load config from file to memory
+
+- name: Ensures proxysql is started and enabled
+  service:
+    name: proxysql
+    state: started
+    enabled: true
+
+- name: Creates log dir
+  file:
+    path: /var/log/proxysql/
+    state: directory
+
+- name: Adds logrotate
+  template:
+    src: proxysql.logrotate.conf.j2
+    dest: /etc/logrotate.d/proxysql
+    mode: 0644
+
+- name: Adds proxysql.my.cnf
+  template:
+    src: proxysql.my.cnf.j2
+    dest: /etc/proxysql.my.cnf
+    mode: 0600

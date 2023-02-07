@@ -1,0 +1,10 @@
+---
+
+- include: install.yml
+  tags:
+    - unison
+
+- include: manage.yml
+  tags:
+    - unison
+    - unison-config

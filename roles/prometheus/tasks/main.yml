@@ -1,0 +1,90 @@
+
+- name: Создаём группу пользователей prometheus
+  group: name="prometheus"
+  become: true
+  tags: prometheus
+
+- name: Создаём пользователя prometheus
+  user:
+    name: "prometheus"
+    group: "prometheus"
+    system: true
+    shell: "/sbin/nologin"
+    comment: "prometheus nologin User"
+    createhome: "no"
+    state: present
+  tags: prometheus
+
+- name: Скачиваем установочные файлы prometheus во временную папку
+  unarchive:
+    src: "https://github.com/prometheus/prometheus/releases/download/v{{ version }}/prometheus-{{ version }}.linux-amd64.tar.gz"
+    dest: /tmp/
+    remote_src: true
+  tags: prometheus
+
+- name: Копирование prometheus файлов в папку bin
+  copy:
+    src: "/tmp/prometheus-{{ version }}.linux-amd64/prometheus"
+    dest: "/usr/local/bin/prometheus"
+    owner: "prometheus"
+    group: "prometheus"
+    remote_src: true
+    mode: 0755
+  tags: prometheus
+
+- name: Удаляю установочные файлы prometheus из временной папки
+  file:
+    path: '/tmp/prometheus-{{ version }}.linux-amd64'
+    state: absent
+  tags: prometheus
+
+- name: Создаём папку для данных prometheus
+  file: 
+    path: "/data/prometheus/"
+    state: directory
+    owner: "prometheus"
+    group: "prometheus"
+    mode: 0755
+  tags: prometheus
+
+- name: Создаём папку для настроек prometheus
+  file: 
+    path: "/etc/prometheus/"
+    state: directory
+    owner: "prometheus"
+    group: "prometheus"
+    mode: 0755
+  tags: prometheus, prometheus_config
+
+- name: Генерируем config файл для prometheus
+  template:
+    src: prometheus.conf.j2
+    dest: /etc/prometheus/prometheus.conf
+  tags: prometheus, prometheus_config
+
+- name: Копируем config файл уведомлений
+  copy:
+    src: "{{ role_path }}/files/alertrules.yml"
+    dest: /etc/prometheus/alert.rules.yml
+  tags: prometheus, prometheus_config
+
+- name: Копирование init файла в папку systemd
+  template:
+    src: init.service.j2
+    dest: /etc/systemd/system/prometheus.service
+  notify: systemd_reload
+  tags: prometheus, prometheus_config
+
+- name: Запуск службы prometheus
+  service:
+    name: prometheus
+    state: started
+    enabled: true
+  tags: prometheus, prometheus_config
+
+- name: Проверяем, доступен ли prometheus
+  uri:
+    url: http://localhost:9090
+    method: GET
+    status_code: 200
+  tags: prometheus, prometheus_config

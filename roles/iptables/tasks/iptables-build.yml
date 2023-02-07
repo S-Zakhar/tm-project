@@ -1,0 +1,9 @@
+- name: "Создание конфига iptables для ipv4"
+  template:
+    backup: true
+    src: "rules.v4.j2"
+    dest: /etc/iptables/rules.v4
+    owner: root
+    group: root
+  notify: netfilter-persistent:test
+  tags: iptables, iptables_config

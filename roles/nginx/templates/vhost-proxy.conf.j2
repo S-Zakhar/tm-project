@@ -1,0 +1,27 @@
+server {
+
+    listen 80;
+
+    server_name {{ nginx.vhost }};
+
+        {% if nginx.auth is defined%}auth_basic "Restricted Content";
+        auth_basic_user_file /etc/nginx/.htpasswd;
+        
+        {%endif-%}
+
+    access_log /var/log/nginx/{{ nginx.vhost }}-access.log;
+    error_log  /var/log/nginx/{{ nginx.vhost }}-errors.log;
+
+    location / {
+
+    proxy_pass http://{{ nginx.proxy_host }}:{{ nginx.proxy_port }};
+    proxy_set_header        X-Real-IP $remote_addr;
+    proxy_set_header        Host $host;
+    proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+
+
+
+}
+
+

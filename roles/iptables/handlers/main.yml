@@ -1,0 +1,13 @@
+---
+# handlers file for roles/iptables
+- name: Проверка корректности правил netfilter-persistent
+  shell: " iptables-restore --test /etc/iptables/rules.v4"
+  listen: netfilter-persistent:test
+  notify: netfilter-persistent:restart
+
+- name: Применение правил netfilter-persistent
+  service:
+    name: netfilter-persistent
+    state: restarted
+    enabled: true
+  listen: netfilter-persistent:restart

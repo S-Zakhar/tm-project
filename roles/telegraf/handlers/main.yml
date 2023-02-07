@@ -1,0 +1,6 @@
+- name: Перезапуск Telegraf
+  service:
+    name: telegraf
+    state: restarted
+    enabled: true
+  listen: telegraf-config:restart
